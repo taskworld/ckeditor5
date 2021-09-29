@@ -14,11 +14,15 @@ const dllPackages = fs.readdirSync( path.join( __dirname, 'src' ) ).map( directo
 
 module.exports = {
 	extends: 'ckeditor5',
+	env: {
+		browser: true
+	},
 	settings: {
 		dllPackages
 	},
 	rules: {
-		'ckeditor5-rules/ckeditor-imports': 'error'
+		'ckeditor5-rules/ckeditor-imports': 'error',
+		'max-len': 'off'
 	},
 	overrides: [
 		{
