@@ -14,16 +14,12 @@ module.exports = {
 		// ESLint should not process a compiled TypeScript.
 		'src/*.js'
 	],
+	env: {
+		browser: true
+	},
 	rules: {
 		'ckeditor5-rules/ckeditor-imports': 'error',
-		'ckeditor5-rules/license-header': [ 'error', {
-			headerLines: [
-				'/**',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
-				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
-			]
-		} ]
+		'max-len': 'off'
 	},
 	overrides: [
 		{
