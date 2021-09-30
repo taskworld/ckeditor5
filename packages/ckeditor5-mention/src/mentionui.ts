@@ -135,6 +135,10 @@ export default class MentionUI extends Plugin {
 		editor.editing.view.document.on<ViewDocumentKeyDownEvent>( 'keydown', ( evt, data ) => {
 			if ( isHandledKey( data.keyCode ) && this._isUIVisible ) {
 				data.preventDefault();
+				// Stop propagating `Enter` key because of "Enter-to-send" feature in Taskworld app
+				if ( typeof data.stopPropagation === 'function' ) {
+					data.stopPropagation();
+				}
 				evt.stop(); // Required for Enter key overriding.
 
 				if ( data.keyCode == keyCodes.arrowdown ) {
