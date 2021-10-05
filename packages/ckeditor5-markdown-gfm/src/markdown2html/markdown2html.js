@@ -14,7 +14,24 @@ marked.use( {
 	tokenizer: {
 		// Disable the autolink rule in the lexer.
 		autolink: () => null,
-		url: () => null
+		url: () => null,
+		/* paragraph( src ) {
+			// console.log( 'm2h tok p src=', JSON.stringify( src ) );
+			const cap = this.rules.block.paragraph.exec( src );
+			if ( cap ) {
+				// console.log( 'm2h tok p cap=', JSON.stringify( cap ) );
+				const token = {
+					type: 'paragraph',
+					raw: cap[ 0 ],
+					text: cap[ 1 ].charAt( cap[ 1 ].length - 1 ) === '\n' ?
+						cap[ 1 ].slice( 0, -1 ) :
+						cap[ 1 ],
+					tokens: []
+				};
+				this.lexer.inline( token.text, token.tokens );
+				return token;
+			}
+		} */
 	},
 	renderer: {
 		checkbox( ...args ) {

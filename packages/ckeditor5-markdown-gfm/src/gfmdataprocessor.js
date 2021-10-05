@@ -57,13 +57,21 @@ export default class GFMDataProcessor {
 	 * @returns {module:engine/view/documentfragment~DocumentFragment} The converted view element.
 	 */
 	toView( data ) {
-		const html = markdown2html( data );
+		console.clear();
+		console.log( '0 data=', JSON.stringify( data ) );
+
+		// Allow consecutive line breaks
+		// See https://github.com/markedjs/marked/issues/835
+		const hack = data.replace( /\s\s\n/g, '<br>' );
+		console.log( '0 hack=', JSON.stringify( hack ) );
+
+		const html = markdown2html( hack );
+		console.log( '0 html=', JSON.stringify( html ) );
 
 		// Converts `@:5f7e99c932cb8c00061b87d9:` to `<span class="mention" data-mention="@5f7e99c932cb8c00061b87d9">@Patrick Star</span>`
 		const htmlWithMentions = html.replace(
 			/@:([0-9a-fA-F]{24}):/g,
-			( match, id ) => `<span class="mention" data-mention="@${ id }">@${
-				escape( typeof this.mentionIdToText === 'function' ? this.mentionIdToText( id ) : id )
+			( match, id ) => `<span class="mention" data-mention="@${ id }">@${ escape( typeof this.mentionIdToText === 'function' ? this.mentionIdToText( id ) : id )
 			}</span>`
 		);
 
@@ -78,33 +86,45 @@ export default class GFMDataProcessor {
 	 * @returns {String} Markdown string.
 	 */
 	toData( viewFragment ) {
+		window.xxx = viewFragment;
 		const html = this._htmlDP.toData( viewFragment );
+		console.log( '1 html=', html );
 
 		// Converts `<span class="mention" data-mention="@5f7e99c932cb8c00061b87d9">@Patrick Star</span>` to `@:5f7e99c932cb8c00061b87d9:`
 		// See https://github.com/taskworld/ckeditor5/blob/84700cd93725130eb28abc1657b058a62b1d662d/packages/ckeditor5-mention/src/mentionediting.js#L140-L141
-		const parser = new window.DOMParser();
-		const holder = parser.parseFromString( html, 'text/html' );
-		const walker = holder.createTreeWalker(
-			holder.body,
-			window.NodeFilter.SHOW_ELEMENT,
-			{
-				acceptNode: node =>
-					( node.classList.contains( 'mention' ) && node.getAttribute( 'data-mention' ) ) ?
-						window.NodeFilter.FILTER_ACCEPT : window.NodeFilter.FILTER_SKIP
-			}
-		);
-		let node;
-		while ( true ) {
-			node = walker.nextNode();
-			if ( node === null ) {
-				break;
-			}
+		const htmlWithMentions = ( () => {
+			const parser = new window.DOMParser();
+			const holder = parser.parseFromString( html, 'text/html' );
+			const walker = holder.createTreeWalker(
+				holder.body,
+				window.NodeFilter.SHOW_ELEMENT,
+				{
+					acceptNode: node =>
+						( node.classList.contains( 'mention' ) && node.getAttribute( 'data-mention' ) ) ?
+							window.NodeFilter.FILTER_ACCEPT : window.NodeFilter.FILTER_SKIP
+				}
+			);
+			let node;
+			while ( true ) {
+				node = walker.nextNode();
+				if ( node === null ) {
+					break;
+				}
 
-			// See https://github.com/taskworld/tw-backend/blob/2c30299fe57fd41a43ca4990377b8503a23266c8/app/legacy/api/message-service/MentionExtractor.ts#L9
-			node.innerText = '@:' + node.getAttribute( 'data-mention' ).replace( /^@/, '' ) + ':';
-		}
+				// See https://github.com/taskworld/tw-backend/blob/2c30299fe57fd41a43ca4990377b8503a23266c8/app/legacy/api/message-service/MentionExtractor.ts#L9
+				node.innerText = '@:' + node.getAttribute( 'data-mention' ).replace( /^@/, '' ) + ':';
+			}
+			return holder.body.innerHTML;
+		} )();
 
-		return html2markdown( holder.body.innerHTML );
+		const data = html2markdown( htmlWithMentions );
+		console.log( '1 data=', JSON.stringify( data ) );
+
+		// Allow consecutive line breaks
+		const hack = data.replace( /\n\n/g, '  \n' );
+		console.log( '1 hack=', JSON.stringify( hack ) );
+
+		return hack;
 	}
 
 	/**

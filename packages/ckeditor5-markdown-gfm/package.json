@@ -14,7 +14,7 @@
   "dependencies": {
     "ckeditor5": "^29.2.0",
     "lodash-es": "^4.17.21",
-    "marked": "1.1.1",
+    "marked": "3.0.4",
     "turndown": "^6.0.0",
     "turndown-plugin-gfm": "^1.0.2"
   },
