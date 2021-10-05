@@ -62,14 +62,19 @@ export default class GFMDataProcessor {
 
 		// Allow consecutive line breaks
 		// See https://github.com/markedjs/marked/issues/835
-		const hack = data.replace( / {2,}\n/g, '<br>' );
+		const hack = data
+			.replace( / {2,}\n/g, '<br>' )
+			.replace( /<br\/>/g, '<br>' );
 		console.log( '0 hack=', JSON.stringify( hack ) );
 
 		const html = markdown2html( hack );
-		console.log( '0 html=', JSON.stringify( html ) );
+		console.log( '0 html1=', JSON.stringify( html ) );
+
+		const htmlWithoutExtraLineBreaks = html.replace( /<br\/>/g, '' );
+		console.log( '0 html2=', JSON.stringify( htmlWithoutExtraLineBreaks ) );
 
 		// Converts `@:5f7e99c932cb8c00061b87d9:` to `<span class="mention" data-mention="@5f7e99c932cb8c00061b87d9">@Patrick Star</span>`
-		const htmlWithMentions = html.replace(
+		const htmlWithMentions = htmlWithoutExtraLineBreaks.replace(
 			/@:([0-9a-fA-F]{24}):/g,
 			( match, id ) => `<span class="mention" data-mention="@${ id }">@${ escape( typeof this.mentionIdToText === 'function' ? this.mentionIdToText( id ) : id )
 			}</span>`
