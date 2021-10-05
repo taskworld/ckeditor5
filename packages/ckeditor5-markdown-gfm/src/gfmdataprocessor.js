@@ -57,12 +57,12 @@ export default class GFMDataProcessor {
 	 * @returns {module:engine/view/documentfragment~DocumentFragment} The converted view element.
 	 */
 	toView( data ) {
-		console.clear();
+		console.log( '-----------------------------------------------------------------------' );
 		console.log( '0 data=', JSON.stringify( data ) );
 
 		// Allow consecutive line breaks
 		// See https://github.com/markedjs/marked/issues/835
-		const hack = data.replace( /\s\s\n/g, '<br>' );
+		const hack = data.replace( / {2,}\n/g, '<br>' );
 		console.log( '0 hack=', JSON.stringify( hack ) );
 
 		const html = markdown2html( hack );
@@ -117,14 +117,20 @@ export default class GFMDataProcessor {
 			return holder.body.innerHTML;
 		} )();
 
-		const data = html2markdown( htmlWithMentions );
-		console.log( '1 data=', JSON.stringify( data ) );
+		console.log( '1 html+mention=', html );
 
 		// Allow consecutive line breaks
-		const hack = data.replace( /\n\n/g, '  \n' );
-		console.log( '1 hack=', JSON.stringify( hack ) );
+		const htmlWithConsecutiveLineBreaks = htmlWithMentions
+			.replace( /(&nbsp;)+<\/p>/g, '</p>' )
+			.replace( /(&nbsp;)+<br\/?>/g, '<br>' )
+			.replace( /<p>\s*<\/p>/g, '<br>' )
+			.replace( /<p>((<br\/?>)+)/g, '$1<p>' );
+		console.log( '1 html+line=', JSON.stringify( htmlWithConsecutiveLineBreaks ) );
 
-		return hack;
+		const data = html2markdown( htmlWithConsecutiveLineBreaks );
+		console.log( '1 data=', JSON.stringify( data ) );
+		console.log( '' );
+		return data;
 	}
 
 	/**
