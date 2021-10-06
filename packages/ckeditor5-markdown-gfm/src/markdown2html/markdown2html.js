@@ -15,11 +15,19 @@ marked.use( {
 		// Disable the autolink rule in the lexer.
 		autolink: () => null,
 		url: () => null,
-		/* paragraph( src ) {
-			// console.log( 'm2h tok p src=', JSON.stringify( src ) );
+		paragraph( src ) {
+			const x = /^<xbr\/?>/.exec( src );
+			if ( x ) {
+				// return
+				/* console.log( 'zzz' );
+				return {
+					type: 'br',
+					raw: x[ 0 ]
+				}; */
+			}
+
 			const cap = this.rules.block.paragraph.exec( src );
 			if ( cap ) {
-				// console.log( 'm2h tok p cap=', JSON.stringify( cap ) );
 				const token = {
 					type: 'paragraph',
 					raw: cap[ 0 ],
@@ -31,7 +39,18 @@ marked.use( {
 				this.lexer.inline( token.text, token.tokens );
 				return token;
 			}
-		} */
+		}
+	},
+	br( src ) {
+		console.log( 'br ', JSON.stringify( src ) );
+
+		const cap = this.rules.inline.br.exec( src );
+		if ( cap ) {
+			return {
+				type: 'br',
+				raw: cap[ 0 ]
+			};
+		}
 	},
 	renderer: {
 		checkbox( ...args ) {

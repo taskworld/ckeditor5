@@ -55,7 +55,14 @@ TurndownService.prototype.escape = function( string ) {
 const turndownService = new TurndownService( {
 	codeBlockStyle: 'fenced',
 	hr: '---',
-	headingStyle: 'atx'
+	headingStyle: 'atx',
+	blankReplacement: ( content, node ) => {
+		if ( node.nodeName === 'P' && node.innerHTML === '&nbsp;' ) {
+			return '<xbr/>';
+		}
+
+		return node.isBlock ? '\n\n' : '';
+	}
 } );
 
 turndownService.use( [

@@ -62,15 +62,18 @@ export default class GFMDataProcessor {
 
 		// Allow consecutive line breaks
 		// See https://github.com/markedjs/marked/issues/835
-		const hack = data
-			.replace( / {2,}\n/g, '<br>' )
-			.replace( /<br\/>/g, '<br>' );
-		console.log( '0 hack=', JSON.stringify( hack ) );
+		const hack = data;
+
+		/* .replace( / {2,}\n/g, '<br>' )
+			.replace( /<br\/>/g, '<br>' ); */
+		// console.log( '0 hack=', JSON.stringify( hack ) );
 
 		const html = markdown2html( hack );
 		console.log( '0 html1=', JSON.stringify( html ) );
 
-		const htmlWithoutExtraLineBreaks = html.replace( /<br\/>/g, '' );
+		const htmlWithoutExtraLineBreaks = html
+			.replace( /<p>((<xbr\/?>)+)<\/p>/g, '$1' )
+			.replace( /<xbr\/?>/g, '<p>&nbsp;</p>' );
 		console.log( '0 html2=', JSON.stringify( htmlWithoutExtraLineBreaks ) );
 
 		// Converts `@:5f7e99c932cb8c00061b87d9:` to `<span class="mention" data-mention="@5f7e99c932cb8c00061b87d9">@Patrick Star</span>`
@@ -122,15 +125,16 @@ export default class GFMDataProcessor {
 			return holder.body.innerHTML;
 		} )();
 
-		console.log( '1 html+mention=', html );
+		// console.log( '1 html+mention=', html );
 
 		// Allow consecutive line breaks
-		const htmlWithConsecutiveLineBreaks = htmlWithMentions
-			.replace( /(&nbsp;)+<\/p>/g, '</p>' )
+		const htmlWithConsecutiveLineBreaks = htmlWithMentions;
+
+		/* .replace( /(&nbsp;)+<\/p>/g, '</p>' )
 			.replace( /(&nbsp;)+<br\/?>/g, '<br>' )
 			.replace( /<p>\s*<\/p>/g, '<br>' )
-			.replace( /<p>((<br\/?>)+)/g, '$1<p>' );
-		console.log( '1 html+line=', JSON.stringify( htmlWithConsecutiveLineBreaks ) );
+			.replace( /<p>((<br\/?>)+)/g, '$1<p>' ); */
+		// console.log( '1 html+line=', JSON.stringify( htmlWithConsecutiveLineBreaks ) );
 
 		const data = html2markdown( htmlWithConsecutiveLineBreaks );
 		console.log( '1 data=', JSON.stringify( data ) );
