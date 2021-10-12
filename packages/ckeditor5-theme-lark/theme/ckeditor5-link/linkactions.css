@@ -15,7 +15,6 @@
 		padding-right: 0;
 
 		& .ck-button__label {
-			padding: 0 var(--ck-spacing-medium);
 			color: var(--ck-color-link-default);
 			text-overflow: ellipsis;
 			cursor: pointer;
@@ -25,10 +24,6 @@
 			max-width: var(--ck-input-width);
 			min-width: 3em;
 			text-align: center;
-
-			&:hover {
-				text-decoration: underline;
-			}
 		}
 
 		&,
@@ -40,12 +35,6 @@
 
 		&:active {
 			box-shadow: none;
-		}
-
-		&:focus {
-			& .ck-button__label {
-				text-decoration: underline;
-			}
 		}
 	}
 
