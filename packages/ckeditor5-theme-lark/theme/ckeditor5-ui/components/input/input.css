@@ -15,13 +15,6 @@
 }
 
 .ck.ck-input {
-	@mixin ck-rounded-corners;
-
-	background: var(--ck-color-input-background);
-	border: 1px solid var(--ck-color-input-border);
-	padding: var(--ck-spacing-extra-tiny) var(--ck-spacing-medium);
-	min-width: var(--ck-input-width);
-
 	/* This is important to stay of the same height as surrounding buttons */
 	min-height: var(--ck-ui-component-min-height);
 
@@ -30,11 +23,6 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		transition: none;
-	}
-
-	&:focus {
-		@mixin ck-focus-ring;
-		@mixin ck-box-shadow var(--ck-focus-outer-shadow);
 	}
 
 	&[readonly] {
@@ -49,7 +37,6 @@
 	}
 
 	&.ck-error {
-		border-color: var(--ck-color-input-error-border);
 		animation: ck-input-shake .3s ease both;
 
 		@media (prefers-reduced-motion: reduce) {
