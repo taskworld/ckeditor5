@@ -62,7 +62,7 @@
 /**
  * The list of plugins to load.
  *
- * If you use an {@glink builds/guides/overview editor build} you can define the list of plugins to load
+ * If you use an {@glink builds/guides/predefined-builds/overview editor build} you can define the list of plugins to load
  * using the names of plugins that are available:
  *
  *		const config = {
@@ -94,7 +94,7 @@
 
 /**
  * The list of additional plugins to load along those already available in the
- * {@glink builds/guides/overview editor build}. It extends the {@link #plugins `plugins`} configuration.
+ * {@glink builds/guides/predefined-builds/overview editor build}. It extends the {@link #plugins `plugins`} configuration.
  *
  *		function MyPlugin( editor ) {
  *			// ...
@@ -115,7 +115,7 @@
  */
 
 /**
- * The list of plugins which should not be loaded despite being available in an {@glink builds/guides/overview editor build}.
+ * The list of plugins which should not be loaded despite being available in an {@glink builds/guides/predefined-builds/overview editor build}.
  *
  *		const config = {
  *			removePlugins: [ 'Bold', 'Italic' ]
@@ -318,8 +318,6 @@
  *		ui: {
  *			viewportOffset: { top: 10, right: 10, bottom: 10, left: 10 }
  *		}
- *
- * 	**Note:** At the moment, only `top` property is supported. Support for other directions will be added in the future.
  *
  * 	**Note:** If you want to modify the viewport offset in runtime (after editor was created), you can do that by overriding {@link module:core/editor/editorui~EditorUI#viewportOffset `editor.ui.viewportOffset`}.
  *
