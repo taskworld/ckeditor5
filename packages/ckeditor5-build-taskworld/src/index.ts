@@ -21,3 +21,15 @@ export default function TaskworldCKEditor( props: {
 }
 
 export { default as EditorEngine } from './ckeditor.js';
+
+// Allow injecting translation object
+// See https://ckeditor.com/docs/ckeditor5/latest/framework/deep-dive/ui/localization.html#:~:text=extending%20the%20global-,window.CKEDITOR_TRANSLATIONS%20object,-.%0AThis%20can
+declare global {
+	interface Window {
+		CKEDITOR_TRANSLATIONS: {
+			[language: string]: {
+				dictionary: Record<string, string>;
+			};
+		};
+	}
+}
