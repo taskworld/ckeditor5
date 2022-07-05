@@ -37,7 +37,7 @@ export default class StrikethroughUI extends Plugin {
 			commandName: STRIKETHROUGH,
 			plugin: this,
 			icon: strikethroughIcon,
-			keystroke: 'CTRL+SHIFT+X',
+			keystroke: 'CTRL+SHIFT+S',
 			label: t( 'Strikethrough' )
 		} );
 

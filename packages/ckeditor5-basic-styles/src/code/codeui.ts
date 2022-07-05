@@ -39,7 +39,8 @@ export default class CodeUI extends Plugin {
 			commandName: CODE,
 			plugin: this,
 			icon: codeIcon,
-			label: t( 'Code' )
+			label: t( 'Code' ),
+			keystroke: 'CTRL+E'
 		} );
 
 		// Add code button to feature components.
