@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -193,8 +193,13 @@ export default class LinkEditing extends Plugin {
 
 			editor.conversion.for( 'downcast' ).attributeToElement( {
 				model: decorator.id,
-				view: ( manualDecoratorName, { writer } ) => {
-					if ( manualDecoratorName ) {
+				view: ( manualDecoratorValue, { writer, schema }, { item } ) => {
+					// Manual decorators for block links are handled e.g. in LinkImageEditing.
+					if ( !schema.isInline( item ) ) {
+						return;
+					}
+
+					if ( manualDecoratorValue ) {
 						const element = writer.createAttributeElement( 'a', decorator.attributes, { priority: 5 } );
 
 						if ( decorator.classes ) {
@@ -209,7 +214,8 @@ export default class LinkEditing extends Plugin {
 
 						return element;
 					}
-				} } );
+				}
+			} );
 
 			editor.conversion.for( 'upcast' ).elementToAttribute( {
 				view: {
@@ -642,9 +648,9 @@ function shouldCopyAttributes( model ) {
 // @params {module:core/editor/editor~Editor} editor
 // @returns {Boolean}
 function isTyping( editor ) {
-	const input = editor.plugins.get( 'Input' );
+	const currentBatch = editor.model.change( writer => writer.batch );
 
-	return input.isInput( editor.model.change( writer => writer.batch ) );
+	return currentBatch.isTyping;
 }
 
 // Returns an array containing names of the attributes allowed on `$text` that describes the link item.

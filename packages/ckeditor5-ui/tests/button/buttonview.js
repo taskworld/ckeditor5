@@ -1,9 +1,9 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
-/* globals Event */
+/* globals Event, document, getComputedStyle */
 
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils';
 import ButtonView from '../../src/button/buttonview';
@@ -12,6 +12,7 @@ import TooltipView from '../../src/tooltip/tooltipview';
 import View from '../../src/view';
 import ViewCollection from '../../src/viewcollection';
 import env from '@ckeditor/ckeditor5-utils/src/env';
+import ToolbarView from '../../src/toolbar/toolbarview';
 
 describe( 'ButtonView', () => {
 	let locale, view;
@@ -410,6 +411,33 @@ describe( 'ButtonView', () => {
 			view.focus();
 
 			sinon.assert.calledOnce( spy );
+		} );
+	} );
+
+	describe( 'Tooltip in toolbar button', () => {
+		let toolbar;
+
+		beforeEach( () => {
+			toolbar = new ToolbarView( locale );
+			toolbar.render();
+			document.body.append( toolbar.element );
+		} );
+
+		afterEach( () => {
+			toolbar.element.remove();
+			toolbar.destroy();
+		} );
+
+		it( 'is displayed when the button is focused', () => {
+			toolbar.items.add( view );
+
+			const tooltip = view.element.children[ 0 ];
+
+			expect( getComputedStyle( tooltip ).visibility ).to.equal( 'hidden' );
+
+			view.focus();
+
+			expect( getComputedStyle( tooltip ).visibility ).to.equal( 'visible' );
 		} );
 	} );
 } );

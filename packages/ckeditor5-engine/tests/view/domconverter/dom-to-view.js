@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -204,6 +204,22 @@ describe( 'DomConverter', () => {
 			const viewComment = converter.domToView( domComment, { skipComments: true } );
 
 			expect( viewComment ).to.be.null;
+		} );
+
+		it( 'should set attributes in the same order as in the DOM', () => {
+			const domP = createElement( document, 'p', { 'data-foo': 'a', 'data-bar': 'b' } );
+			const viewP = converter.domToView( domP );
+
+			expect( viewP ).to.be.an.instanceof( ViewElement );
+			expect( viewP.name ).to.equal( 'p' );
+
+			const attributes = Array.from( viewP.getAttributes() );
+
+			expect( attributes.length ).to.equal( 2 );
+			expect( attributes ).to.deep.equal( [
+				[ 'data-foo', 'a' ],
+				[ 'data-bar', 'b' ]
+			] );
 		} );
 
 		describe( 'it should clear whitespaces', () => {

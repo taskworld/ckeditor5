@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -12,7 +12,7 @@ import priorities from '@ckeditor/ckeditor5-utils/src/priorities';
 import { isParagraphable, wrapInParagraph } from '../model/utils/autoparagraphing';
 
 /**
- * Contains {@link module:engine/view/view view} to {@link module:engine/model/model model} converters for
+ * Contains the {@link module:engine/view/view view} to {@link module:engine/model/model model} converters for
  * {@link module:engine/conversion/upcastdispatcher~UpcastDispatcher}.
  *
  * @module engine/conversion/upcasthelpers
@@ -20,6 +20,8 @@ import { isParagraphable, wrapInParagraph } from '../model/utils/autoparagraphin
 
 /**
  * Upcast conversion helper functions.
+ *
+ * Learn more about {@glink framework/guides/deep-dive/conversion/upcast upcast helpers}.
  *
  * @extends module:engine/conversion/conversionhelpers~ConversionHelpers
  */
@@ -463,6 +465,11 @@ export function convertText() {
 				return;
 			}
 
+			// Do not auto-paragraph whitespaces.
+			if ( data.viewItem.data.trim().length == 0 ) {
+				return;
+			}
+
 			position = wrapInParagraph( position, writer );
 		}
 
@@ -865,6 +872,13 @@ function prepareToAttributeConverter( config, shallow ) {
 	const matcher = new Matcher( config.view );
 
 	return ( evt, data, conversionApi ) => {
+		// Converting an attribute of an element that has not been converted to anything does not make sense
+		// because there will be nowhere to set that attribute on. At this stage, the element should've already
+		// been converted (https://github.com/ckeditor/ckeditor5/issues/11000).
+		if ( !data.modelRange && shallow ) {
+			return;
+		}
+
 		const match = matcher.match( data.viewItem );
 
 		// If there is no match, this callback should not do anything.
@@ -875,7 +889,8 @@ function prepareToAttributeConverter( config, shallow ) {
 		if ( onlyViewNameIsDefined( config.view, data.viewItem ) ) {
 			match.match.name = true;
 		} else {
-			// Do not test or consume `name` consumable.
+			// Do not test `name` consumable because it could get consumed already while upcasting some other attribute
+			// on the same element (for example <span class="big" style="color: red">foo</span>).
 			delete match.match.name;
 		}
 
@@ -906,6 +921,15 @@ function prepareToAttributeConverter( config, shallow ) {
 		// It may happen that a converter will try to set an attribute that is not allowed in the given context.
 		// In such a situation we cannot consume the attribute. See: https://github.com/ckeditor/ckeditor5/pull/9249#issuecomment-815658459.
 		if ( attributeWasSet ) {
+			// Verify if the element itself wasn't consumed yet. It could be consumed already while upcasting some other attribute
+			// on the same element (for example <span class="big" style="color: red">foo</span>).
+			// We need to consume it so other features (especially GHS) won't try to convert it.
+			// Note that it's not tested by the other element-to-attribute converters whether an element was consumed before
+			// (in case of converters that the element itself is just a context and not the primary information to convert).
+			if ( conversionApi.consumable.test( data.viewItem, { name: true } ) ) {
+				match.match.name = true;
+			}
+
 			conversionApi.consumable.consume( data.viewItem, match.match );
 		}
 	};

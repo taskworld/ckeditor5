@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -3981,7 +3981,11 @@ describe( 'Renderer', () => {
 					.callsFake( () => {} );
 
 				console.warn
-					.withArgs( sinon.match( /^domconverter-unsafe-element-detected/ ) )
+					.withArgs( sinon.match( /^domconverter-unsafe-script-element-detected/ ) )
+					.callsFake( () => {} );
+
+				console.warn
+					.withArgs( sinon.match( /^domconverter-unsafe-style-element-detected/ ) )
 					.callsFake( () => {} );
 
 				console.warn.callThrough();
@@ -4027,6 +4031,24 @@ describe( 'Renderer', () => {
 				delete window.spy;
 			} );
 
+			it( 'should replace style element with span and custom data attribute', () => {
+				window.spy = sinon.spy();
+
+				const viewA = new ViewElement( viewDoc, 'style' );
+
+				// Assign content of the `<style>` element, as the utility method `setVewData` will fail becasuse of brace characters.
+				viewA._appendChild( new ViewText( viewDoc, '.foo { color: red; }' ) );
+				viewRoot._appendChild( viewA );
+
+				view.forceRender();
+
+				expect( window.spy.calledOnce ).to.be.false;
+				expect( getViewData( view ) ).to.equal( '<style>.foo { color: red; }</style>' );
+				expect( normalizeHtml( domRoot.innerHTML ) ).to.equal( '<span data-ck-unsafe-element="style">.foo { color: red; }</span>' );
+
+				delete window.spy;
+			} );
+
 			it( 'should rename attributes that can affect editing pipeline', () => {
 				setViewData( view,
 					'<container:p onclick="test">' +
@@ -4040,7 +4062,7 @@ describe( 'Renderer', () => {
 				expect( normalizeHtml( domRoot.innerHTML ) ).to.equal( '<p data-ck-unsafe-attribute-onclick="test">foo</p>' );
 			} );
 
-			it( 'should rename attributes that can affect editing pipeline unless permitted when the element was created', () => {
+			it( 'should rename attributes that can affect editing pipeline unless permitted when the container element was created', () => {
 				view.change( writer => {
 					const containerElement = writer.createContainerElement( 'p', {
 						onclick: 'foo',
@@ -4058,6 +4080,27 @@ describe( 'Renderer', () => {
 				expect( getViewData( view ) ).to.equal( '<p onclick="foo" onkeydown="bar">baz</p>' );
 				expect( normalizeHtml( domRoot.innerHTML ) ).to.equal(
 					'<p data-ck-unsafe-attribute-onkeydown="bar" onclick="foo">baz</p>'
+				);
+			} );
+
+			it( 'should rename attributes that can affect editing pipeline unless permitted when an attribute element was created', () => {
+				view.change( writer => {
+					const attributeElement = writer.createAttributeElement( 'span', {
+						onclick: 'foo',
+						onkeydown: 'bar'
+					}, {
+						renderUnsafeAttributes: [ 'onclick' ]
+					} );
+
+					writer.insert( writer.createPositionAt( view.document.getRoot(), 'start' ), writer.createText( 'baz' ) );
+					writer.wrap( writer.createRangeIn( view.document.getRoot() ), attributeElement );
+				} );
+
+				view.forceRender();
+
+				expect( getViewData( view ) ).to.equal( '<span onclick="foo" onkeydown="bar">baz</span>' );
+				expect( normalizeHtml( domRoot.innerHTML ) ).to.equal(
+					'<span data-ck-unsafe-attribute-onkeydown="bar" onclick="foo">baz</span>'
 				);
 			} );
 
@@ -4538,6 +4581,99 @@ describe( 'Renderer', () => {
 					expect( domSelection.getRangeAt( 0 ).startContainer ).to.equal( domParagraph.childNodes[ 0 ].childNodes[ 0 ] );
 					expect( domSelection.getRangeAt( 0 ).startOffset ).to.equal( 1 );
 					expect( domSelection.getRangeAt( 0 ).endOffset ).to.equal( 2 );
+				} );
+
+				// https://github.com/ckeditor/ckeditor5/issues/11472.
+				it( 'should not remove the inline filler while the user is making selection', () => {
+					const domSelection = document.getSelection();
+
+					const {
+						view: viewParagraph,
+						selection: viewSelection
+					} = parse( '<container:p><attribute:b>foo<attribute:i>[]</attribute:i></attribute:b></container:p>' );
+
+					viewRoot._appendChild( viewParagraph );
+					selection._setTo( viewSelection );
+
+					// -----------------------------------------------------------------------------------------------
+					// STEP #1: The first render() is to set the initial state of the editor.
+					renderer.markToSync( 'children', viewRoot );
+					renderer.render();
+
+					const domParagraph = domRoot.childNodes[ 0 ];
+
+					// The filler was inserted <p><b>foo<i>FILLER{}</i></b></p>.
+					expect( domParagraph.childNodes.length ).to.equal( 1 );
+					expect( domParagraph.childNodes[ 0 ].outerHTML ).to.equal( `<b>foo<i>${ INLINE_FILLER }</i></b>` );
+
+					let domItalic = domParagraph.childNodes[ 0 ].childNodes[ 1 ];
+
+					expect( domSelection.rangeCount ).to.equal( 1 );
+					expect( domSelection.getRangeAt( 0 ).startContainer ).to.equal( domItalic.childNodes[ 0 ] );
+					expect( domSelection.getRangeAt( 0 ).startOffset ).to.equal( INLINE_FILLER_LENGTH );
+					expect( domSelection.getRangeAt( 0 ).collapsed ).to.be.true;
+
+					// -----------------------------------------------------------------------------------------------
+					// STEP #2: Now typing in the same node as an inline filler.
+					// Then comes the second render().
+					// * The filler should be still at the beginning of a text node:   <p><b>foo<i>FILLER{}bar</i></b></p>
+
+					const viewItalic = viewParagraph.getChild( 0 ).getChild( 1 );
+					const viewText = new ViewText( viewDocument, 'bar' );
+
+					viewItalic._appendChild( viewText );
+
+					// <p><b>foo<i>bar{}</i></b></p>.
+					selection._setTo(
+						ViewRange._createFromParentsAndOffsets(
+							viewText, viewText.data.length,
+							viewText, viewText.data.length
+						)
+					);
+
+					renderer.markToSync( 'children', viewRoot );
+					renderer.markToSync( 'text', viewText );
+					renderer.render();
+
+					// The filler was still at the beginning of a text node <p><b>foo<i>FILLER{}bar</i></b></p>.
+					expect( domParagraph.childNodes.length ).to.equal( 1 );
+					expect( domParagraph.childNodes[ 0 ].outerHTML ).to.equal( `<b>foo<i>${ INLINE_FILLER }bar</i></b>` );
+
+					domItalic = domParagraph.childNodes[ 0 ].childNodes[ 1 ];
+
+					expect( domSelection.rangeCount ).to.equal( 1 );
+					expect( domSelection.getRangeAt( 0 ).startContainer ).to.equal( domItalic.childNodes[ 0 ] );
+					expect( domSelection.getRangeAt( 0 ).startOffset ).to.equal( INLINE_FILLER_LENGTH + viewText.data.length );
+					expect( domSelection.getRangeAt( 0 ).collapsed ).to.be.true;
+
+					// -----------------------------------------------------------------------------------------------
+					// STEP #3: Now we're moving the selection somewhere else while isSelecting = true
+					// and rendering once again after isSelecting = false.
+					renderer.isSelecting = true;
+
+					// <p><b>foo{}<i>bar</i></b></p>.
+					selection._setTo(
+						ViewRange._createFromParentsAndOffsets(
+							viewParagraph.getChild( 0 ).getChild( 0 ), 3,
+							viewParagraph.getChild( 0 ).getChild( 0 ), 3
+						)
+					);
+
+					// Mark the text node to sync to verify if inline filler won't get removed.
+					renderer.markToSync( 'text', viewText );
+					renderer.render();
+
+					renderer.isSelecting = false;
+					renderer.render();
+
+					// The inline filler should be removed without crashing <p><b>foo{}<i>bar</i></b></p>.
+					expect( domParagraph.childNodes.length ).to.equal( 1 );
+					expect( domParagraph.childNodes[ 0 ].outerHTML ).to.equal( '<b>foo<i>bar</i></b>' );
+
+					expect( domSelection.rangeCount ).to.equal( 1 );
+					expect( domSelection.getRangeAt( 0 ).startContainer ).to.equal( domParagraph.childNodes[ 0 ].childNodes[ 0 ] );
+					expect( domSelection.getRangeAt( 0 ).startOffset ).to.equal( 3 );
+					expect( domSelection.getRangeAt( 0 ).collapsed ).to.be.true;
 				} );
 			} );
 

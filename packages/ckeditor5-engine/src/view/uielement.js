@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -49,9 +49,6 @@ export default class UIElement extends Element {
 	 */
 	constructor( document, name, attributes, children ) {
 		super( document, name, attributes, children );
-
-		// Override the default of the base class.
-		this._isAllowedInsideAttributeElement = true;
 
 		/**
 		 * Returns `null` because filler is not needed for UIElements.

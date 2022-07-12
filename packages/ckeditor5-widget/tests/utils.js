@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -214,6 +214,20 @@ describe( 'widget utils', () => {
 
 		it( 'should add proper class', () => {
 			expect( element.hasClass( 'ck-editor__editable', 'ck-editor__nested-editable' ) ).to.be.true;
+		} );
+
+		it( 'should add proper role', () => {
+			expect( element.getAttribute( 'role' ) ).to.equal( 'textbox' );
+		} );
+
+		it( 'should add label if it was passed through options', () => {
+			toWidgetEditable( element, writer, { label: 'foo' } );
+			expect( element.getAttribute( 'aria-label' ) ).to.equal( 'foo' );
+		} );
+
+		it( 'should not add label if it was not passed through options', () => {
+			toWidgetEditable( element, writer );
+			expect( element.hasAttribute( 'aria-label' ) ).to.be.false;
 		} );
 
 		it( 'should add proper contenteditable value when element is read-only - initialization', () => {

@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -492,6 +492,19 @@ describe( 'MediaEmbedEditing', () => {
 					expect( model.schema.checkChild( [ '$root', 'media' ], 'media' ) ).to.be.false;
 					expect( model.schema.checkChild( [ '$root', 'media' ], '$text' ) ).to.be.false;
 					expect( model.schema.checkChild( [ '$root', '$block' ], 'imageBlock' ) ).to.be.false;
+				} );
+		} );
+
+		it( 'inherits attributes from $blockObject', () => {
+			return createTestEditor()
+				.then( newEditor => {
+					model = newEditor.model;
+
+					model.schema.extend( '$blockObject', {
+						allowAttributes: 'foo'
+					} );
+
+					expect( model.schema.checkAttribute( 'media', 'foo' ) ).to.be.true;
 				} );
 		} );
 

@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -28,6 +28,7 @@ import { logWarning } from '@ckeditor/ckeditor5-utils/src/ckeditorerror';
 import indexOf from '@ckeditor/ckeditor5-utils/src/dom/indexof';
 import getAncestors from '@ckeditor/ckeditor5-utils/src/dom/getancestors';
 import isText from '@ckeditor/ckeditor5-utils/src/dom/istext';
+import isComment from '@ckeditor/ckeditor5-utils/src/dom/iscomment';
 
 const BR_FILLER_REF = BR_FILLER( document ); // eslint-disable-line new-cap
 const NBSP_FILLER_REF = NBSP_FILLER( document ); // eslint-disable-line new-cap
@@ -124,6 +125,15 @@ export default class DomConverter {
 		this.inlineObjectElements = [
 			'object', 'iframe', 'input', 'button', 'textarea', 'select', 'option', 'video', 'embed', 'audio', 'img', 'canvas'
 		];
+
+		/**
+		 * A list of elements which may affect the editing experience. To avoid this, those elements are replaced with
+		 * `<span data-ck-unsafe-element="[element name]"></span>` while rendering in the editing mode.
+		 *
+		 * @readonly
+		 * @member {Array.<String>} module:engine/view/domconverter~DomConverter#unsafeElements
+		 */
+		this.unsafeElements = [ 'script', 'style' ];
 
 		/**
 		 * The DOM-to-view mapping.
@@ -322,7 +332,7 @@ export default class DomConverter {
 
 			// There are certain nodes, that should be renamed to <span> in editing pipeline.
 			if ( this._shouldRenameElement( elementName ) ) {
-				logWarning( 'domconverter-unsafe-element-detected', { unsafeElement: currentNode } );
+				_logUnsafeElement( elementName );
 
 				currentNode.replaceWith( this._createReplacementDomElement( elementName, currentNode ) );
 			}
@@ -383,7 +393,7 @@ export default class DomConverter {
 			} else {
 				// Create DOM element.
 				if ( this._shouldRenameElement( viewNode.name ) ) {
-					logWarning( 'domconverter-unsafe-element-detected', { unsafeElement: viewNode } );
+					_logUnsafeElement( viewNode.name );
 
 					domElement = this._createReplacementDomElement( viewNode.name );
 				} else if ( viewNode.hasAttribute( 'xmlns' ) ) {
@@ -424,10 +434,10 @@ export default class DomConverter {
 	 * **Note**: To remove the attribute, use {@link #removeDomElementAttribute}.
 	 *
 	 * @param {HTMLElement} domElement The DOM element the attribute should be set on.
-	 * @param {String} key The name of the attribute
-	 * @param {String} value The value of the attribute
+	 * @param {String} key The name of the attribute.
+	 * @param {String} value The value of the attribute.
 	 * @param {module:engine/view/element~Element} [relatedViewElement] The view element related to the `domElement` (if there is any).
-	 * It helps decide whether the attribute set is unsafe. For instance, view elements created via
+	 * It helps decide whether the attribute set is unsafe. For instance, view elements created via the
 	 * {@link module:engine/view/downcastwriter~DowncastWriter} methods can allow certain attributes that would normally be filtered out.
 	 */
 	setDomElementAttribute( domElement, key, value, relatedViewElement = null ) {
@@ -491,7 +501,22 @@ export default class DomConverter {
 				yield this._getBlockFiller( domDocument );
 			}
 
-			yield this.viewToDom( childView, domDocument, options );
+			const transparentRendering = childView.is( 'element' ) && childView.getCustomProperty( 'dataPipeline:transparentRendering' );
+
+			if ( transparentRendering && this.renderingMode == 'data' ) {
+				yield* this.viewChildrenToDom( childView, domDocument, options );
+			} else {
+				if ( transparentRendering ) {
+					/**
+					 * The `dataPipeline:transparentRendering` flag is supported only in the data pipeline.
+					 *
+					 * @error domconverter-transparent-rendering-unsupported-in-editing-pipeline
+					 */
+					logWarning( 'domconverter-transparent-rendering-unsupported-in-editing-pipeline', { viewElement: childView } );
+				}
+
+				yield this.viewToDom( childView, domDocument, options );
+			}
 
 			offset++;
 		}
@@ -617,7 +642,7 @@ export default class DomConverter {
 			return hostElement;
 		}
 
-		if ( this.isComment( domNode ) && options.skipComments ) {
+		if ( isComment( domNode ) && options.skipComments ) {
 			return null;
 		}
 
@@ -655,15 +680,15 @@ export default class DomConverter {
 				const attrs = domNode.attributes;
 
 				if ( attrs ) {
-					for ( let i = attrs.length - 1; i >= 0; i-- ) {
+					for ( let l = attrs.length, i = 0; i < l; i++ ) {
 						viewElement._setAttribute( attrs[ i ].name, attrs[ i ].value );
 					}
 				}
 
 				// Treat this element's content as a raw data if it was registered as such.
 				// Comment node is also treated as an element with raw data.
-				if ( this._isViewElementWithRawContent( viewElement, options ) || this.isComment( domNode ) ) {
-					const rawContent = this.isComment( domNode ) ? domNode.data : domNode.innerHTML;
+				if ( this._isViewElementWithRawContent( viewElement, options ) || isComment( domNode ) ) {
+					const rawContent = isComment( domNode ) ? domNode.data : domNode.innerHTML;
 
 					viewElement._setCustomProperty( '$rawContent', rawContent );
 
@@ -1030,16 +1055,6 @@ export default class DomConverter {
 	 */
 	isDocumentFragment( node ) {
 		return node && node.nodeType == Node.DOCUMENT_FRAGMENT_NODE;
-	}
-
-	/**
-	 * Returns `true` when `node.nodeType` equals `Node.COMMENT_NODE`.
-	 *
-	 * @param {Node} node Node to check.
-	 * @returns {Boolean}
-	 */
-	isComment( node ) {
-		return node && node.nodeType == Node.COMMENT_NODE;
 	}
 
 	/**
@@ -1526,7 +1541,7 @@ export default class DomConverter {
 	 * @returns {Element}
 	 */
 	_createViewElement( node, options ) {
-		if ( this.isComment( node ) ) {
+		if ( isComment( node ) ) {
 			return new ViewUIElement( this.document, '$comment' );
 		}
 
@@ -1555,7 +1570,9 @@ export default class DomConverter {
 	 * @returns {Boolean}
 	 */
 	_shouldRenameElement( elementName ) {
-		return this.renderingMode == 'editing' && elementName.toLowerCase() == 'script';
+		const name = elementName.toLowerCase();
+
+		return this.renderingMode === 'editing' && this.unsafeElements.includes( name );
 	}
 
 	/**
@@ -1635,6 +1652,20 @@ function hasBlockParent( domNode, blockElements ) {
 	return parent && parent.tagName && blockElements.includes( parent.tagName.toLowerCase() );
 }
 
+// Log to console the information about element that was replaced.
+// Check UNSAFE_ELEMENTS for all recognized unsafe elements.
+//
+// @param {String} elementName The name of the view element
+function _logUnsafeElement( elementName ) {
+	if ( elementName === 'script' ) {
+		logWarning( 'domconverter-unsafe-script-element-detected' );
+	}
+
+	if ( elementName === 'style' ) {
+		logWarning( 'domconverter-unsafe-style-element-detected' );
+	}
+}
+
 /**
  * Enum representing the type of the block filler.
  *
@@ -1649,13 +1680,17 @@ function hasBlockParent( domNode, blockElements ) {
  */
 
 /**
- * The {@link module:engine/view/domconverter~DomConverter} detected a `<script>` element that may disrupt the
- * {@glink framework/guides/architecture/editing-engine#editing-pipeline editing pipeline} of the editor. To avoid this,
- * the `<script>` element was renamed to `<span data-ck-unsafe-element="script"></span>`.
+ * While rendering the editor content, the {@link module:engine/view/domconverter~DomConverter} detected a `<script>` element that may
+ * disrupt the editing experience. To avoid this, the `<script>` element was replaced with `<span data-ck-unsafe-element="script"></span>`.
  *
- * @error domconverter-unsafe-element-detected
- * @param {module:engine/model/element~Element|HTMLElement} unsafeElement The editing view or DOM element
- * that was renamed.
+ * @error domconverter-unsafe-script-element-detected
+ */
+
+/**
+ * While rendering the editor content, the {@link module:engine/view/domconverter~DomConverter} detected a `<style>` element that may affect
+ * the editing experience. To avoid this, the `<style>` element was replaced with `<span data-ck-unsafe-element="style"></span>`.
+ *
+ * @error domconverter-unsafe-style-element-detected
  */
 
 /**

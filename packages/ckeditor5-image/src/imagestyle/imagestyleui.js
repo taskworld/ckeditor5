@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -129,6 +129,7 @@ export default class ImageStyleUI extends Plugin {
 
 			const dropdownView = createDropdown( locale, SplitButtonView );
 			const splitButtonView = dropdownView.buttonView;
+			const splitButtonViewArrow = splitButtonView.arrowView;
 
 			addToolbarToDropdown( dropdownView, buttonViews );
 
@@ -136,6 +137,11 @@ export default class ImageStyleUI extends Plugin {
 				label: getDropdownButtonTitle( title, defaultButton.label ),
 				class: null,
 				tooltip: true
+			} );
+
+			splitButtonViewArrow.unbind( 'label' );
+			splitButtonViewArrow.set( {
+				label: title
 			} );
 
 			splitButtonView.bind( 'icon' ).toMany( buttonViews, 'isOn', ( ...areOn ) => {

@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -56,7 +56,7 @@ export const NBSP_FILLER = domDocument => domDocument.createTextNode( '\u00A0' )
 export const MARKED_NBSP_FILLER = domDocument => {
 	const span = domDocument.createElement( 'span' );
 	span.dataset.ckeFiller = true;
-	span.innerHTML = '\u00A0';
+	span.innerText = '\u00A0';
 
 	return span;
 };

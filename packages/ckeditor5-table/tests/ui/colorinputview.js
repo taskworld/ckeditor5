@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -99,7 +99,8 @@ describe( 'ColorInputView', () => {
 			it( 'should be created', () => {
 				expect( view._dropdownView ).to.be.instanceOf( DropdownView );
 				expect( view._dropdownView.buttonView.element.classList.contains( 'ck-input-color__button' ) ).to.be.true;
-				expect( view._dropdownView.buttonView.tooltip ).to.equal( 'Color picker' );
+				expect( view._dropdownView.buttonView.tooltip ).to.be.true;
+				expect( view._dropdownView.buttonView.label ).to.equal( 'Color picker' );
 			} );
 
 			it( 'should bind #isEnabled to the view\'s #isReadOnly', () => {
