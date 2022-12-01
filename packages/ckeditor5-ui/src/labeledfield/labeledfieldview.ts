@@ -203,7 +203,7 @@ export default class LabeledFieldView extends View {
 		 *
 		 * @member {module:ui/viewcollection~ViewCollection} #fieldWrapperChildren
 		 */
-		this.fieldWrapperChildren = this.createCollection( [ this.fieldView, this.labelView ] );
+		this.fieldWrapperChildren = this.createCollection( [ this.fieldView ] );
 
 		/**
 		 * The combined status text made of {@link #errorText} and {@link #infoText}.
