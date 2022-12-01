@@ -75,6 +75,16 @@ export default class ClassicEditorUI extends EditorUI {
 		// to recognize the particular editable, for instance in ARIA attributes.
 		editable.name = editingRoot.rootName;
 
+		// Do not move it into _initToolbar method as this must be initialized before the scroll event listener in stickypanelview.js
+		const viewport = editor.config.get( 'ui' )?.viewport;
+		if ( viewport ) {
+			view.stickyPanel.set( 'viewport', viewport );
+		}
+		const positionalReferenceFrame = editor.config.get( 'ui' )?.positionalReferenceFrame;
+		if ( positionalReferenceFrame ) {
+			view.stickyPanel.set( 'positionalReferenceFrame', positionalReferenceFrame );
+		}
+
 		view.render();
 
 		// The editable UI element in DOM is available for sure only after the editor UI view has been rendered.
@@ -135,7 +145,6 @@ export default class ClassicEditorUI extends EditorUI {
 		// Set–up the sticky panel with toolbar.
 		view.stickyPanel.bind( 'isActive' ).to( this.focusTracker, 'isFocused' );
 		view.stickyPanel.limiterElement = view.element;
-		view.stickyPanel.bind( 'viewportTopOffset' ).to( this, 'viewportOffset', ( { top } ) => top );
 
 		view.toolbar.fillFromConfig( this._toolbarConfig, this.componentFactory );
 

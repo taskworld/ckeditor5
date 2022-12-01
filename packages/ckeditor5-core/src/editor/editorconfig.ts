@@ -469,4 +469,6 @@ export interface UiConfig {
 		right?: number;
 		top?: number;
 	};
+	viewport: () => HTMLElement;
+	positionalReferenceFrame: () => HTMLElement;
 }
