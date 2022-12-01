@@ -8,7 +8,6 @@
  */
 
 import EditorUIView from '../editoruiview.js';
-import LabelView from '../../label/labelview.js';
 import type ViewCollection from '../../viewcollection.js';
 
 import type { Locale } from '@ckeditor/ckeditor5-utils';
@@ -19,9 +18,9 @@ import type { Locale } from '@ckeditor/ckeditor5-utils';
  */
 export default abstract class BoxedEditorUIView extends EditorUIView {
 	/**
-	 * Collection of the child views located in the top (`.ck-editor__top`)
-	 * area of the UI.
-	 */
+		 * Collection of the child views located in the top (`.ck-editor__top`)
+		 * area of the UI.
+		 */
 	public readonly top: ViewCollection;
 
 	/**
@@ -29,11 +28,6 @@ export default abstract class BoxedEditorUIView extends EditorUIView {
 	 * area of the UI.
 	 */
 	public readonly main: ViewCollection;
-
-	/**
-	 * Voice label of the UI.
-	 */
-	private readonly _voiceLabelView: LabelView;
 
 	/**
 	 * Creates an instance of the boxed editor UI view class.
@@ -45,7 +39,6 @@ export default abstract class BoxedEditorUIView extends EditorUIView {
 
 		this.top = this.createCollection();
 		this.main = this.createCollection();
-		this._voiceLabelView = this._createVoiceLabel();
 
 		this.setTemplate( {
 			tag: 'div',
@@ -59,12 +52,10 @@ export default abstract class BoxedEditorUIView extends EditorUIView {
 				],
 				role: 'application',
 				dir: locale.uiLanguageDirection,
-				lang: locale.uiLanguage,
-				'aria-labelledby': this._voiceLabelView.id
+				lang: locale.uiLanguage
 			},
 
 			children: [
-				this._voiceLabelView,
 				{
 					tag: 'div',
 					attributes: {
@@ -90,23 +81,5 @@ export default abstract class BoxedEditorUIView extends EditorUIView {
 				}
 			]
 		} );
-	}
-
-	/**
-	 * Creates a voice label view instance.
-	 */
-	private _createVoiceLabel() {
-		const t = this.t;
-		const voiceLabel = new LabelView();
-
-		voiceLabel.text = t( 'Rich Text Editor' );
-
-		voiceLabel.extendTemplate( {
-			attributes: {
-				class: 'ck-voice-label'
-			}
-		} );
-
-		return voiceLabel;
 	}
 }
