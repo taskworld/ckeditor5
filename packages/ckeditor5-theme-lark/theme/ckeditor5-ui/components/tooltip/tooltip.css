@@ -15,9 +15,21 @@
 	padding: 0 var(--ck-spacing-medium);
 
 	& .ck-tooltip__text {
-		font-size: .9em;
-		line-height: 1.5;
 		color: var(--ck-color-tooltip-text);
+		background: var(--ck-color-tooltip-background);
+		position: relative;
+		left: -50%;
+
+		&::after {
+			/*
+			 * For the transition to work, the tooltip must be controlled
+			 * using visibility+opacity. A delay prevents a "tooltip avalanche"
+			 * i.e. when scanning the toolbar with mouse cursor.
+			 */
+			transition: opacity .2s ease-in-out .2s;
+			border-style: solid;
+			left: 50%;
+		}
 	}
 
 	/* Reset balloon panel styles */
