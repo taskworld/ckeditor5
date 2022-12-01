@@ -14,7 +14,6 @@ import DecoupledEditor from '../src/decouplededitor';
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
-import DataApiMixin from '@ckeditor/ckeditor5-core/src/editor/utils/dataapimixin';
 import RootElement from '@ckeditor/ckeditor5-engine/src/model/rootelement';
 import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror';
 
@@ -45,7 +44,8 @@ describe( 'DecoupledEditor', () => {
 		} );
 
 		it( 'has a Data Interface', () => {
-			expect( testUtils.isMixed( DecoupledEditor, DataApiMixin ) ).to.be.true;
+			expect( DecoupledEditor.prototype ).have.property( 'setData' ).to.be.a( 'function' );
+			expect( DecoupledEditor.prototype ).have.property( 'getData' ).to.be.a( 'function' );
 		} );
 
 		it( 'creates main root element', () => {
@@ -395,7 +395,20 @@ describe( 'DecoupledEditor', () => {
 					} );
 			} );
 
+			// We don't update the source element by default, so after destroy, it should become empty.
+			it( 'don\'t set data back to the element', () => {
+				editor.setData( '<p>foo</p><p>bar</p>' );
+
+				return editor.destroy()
+					.then( () => {
+						expect( editableElement.innerHTML ).to.equal( '' );
+					} );
+			} );
+
+			// Adding `updateSourceElementOnDestroy` config to the editor allows setting the data
+			// back to the source element after destroy.
 			it( 'sets data back to the element', () => {
+				editor.config.set( 'updateSourceElementOnDestroy', true );
 				editor.setData( '<p>foo</p>' );
 
 				return editor.destroy()
