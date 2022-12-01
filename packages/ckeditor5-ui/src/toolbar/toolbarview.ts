@@ -13,6 +13,7 @@ import FocusCycler from '../focuscycler';
 import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
 import ToolbarSeparatorView from './toolbarseparatorview';
 import ToolbarLineBreakView from './toolbarlinebreakview';
+import ToolbarSpacerView from './toolbarspacerview';
 import ResizeObserver from '@ckeditor/ckeditor5-utils/src/dom/resizeobserver';
 import preventDefault from '../bindings/preventdefault';
 import Rect from '@ckeditor/ckeditor5-utils/src/dom/rect';
@@ -345,6 +346,8 @@ export default class ToolbarView extends View implements DropdownPanelFocusable 
 					return new ToolbarSeparatorView();
 				} else if ( item === '-' ) {
 					return new ToolbarLineBreakView();
+				} else if ( item === '*' ) {
+					return new ToolbarSpacerView();
 				}
 
 				return factory.create( item );
@@ -371,7 +374,7 @@ export default class ToolbarView extends View implements DropdownPanelFocusable 
 	) {
 		const filteredItems = items
 			.filter( ( item, idx, items ) => {
-				if ( item === '|' ) {
+				if ( item === '|' || item === '*' ) {
 					return true;
 				}
 
@@ -446,7 +449,7 @@ export default class ToolbarView extends View implements DropdownPanelFocusable 
 	 * @returns {Array.<String>} Toolbar items after the separator and line break clean-up.
 	 */
 	private _cleanSeparatorsAndLineBreaks( items: Array<ToolbarConfigItem> ) {
-		const nonSeparatorPredicate = ( item: ToolbarConfigItem ) => ( item !== '-' && item !== '|' );
+		const nonSeparatorPredicate = ( item: ToolbarConfigItem ) => ( item !== '-' && item !== '|' && item !== '*' );
 		const count = items.length;
 
 		// Find an index of the first item that is not a separator.
