@@ -201,7 +201,7 @@ export default class LabeledFieldView<TFieldView extends FocusableView = Focusab
 
 		this.labelView = this._createLabelView( viewUid );
 		this.statusView = this._createStatusView( statusUid );
-		this.fieldWrapperChildren = this.createCollection( [ this.fieldView, this.labelView ] );
+		this.fieldWrapperChildren = this.createCollection( [ this.fieldView ] );
 
 		this.bind( '_statusText' ).to(
 			this, 'errorText',

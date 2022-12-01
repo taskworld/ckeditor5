@@ -109,9 +109,9 @@ export default class LinkFormView extends View {
 
 		this._validators = validators;
 		this.urlInputView = this._createUrlInput();
-		this.saveButtonView = this._createButton( t( 'Save' ), icons.check, 'ck-button-save' );
+		this.saveButtonView = this._createButton( t( 'Add' ), undefined, 'ck-button-save' );
 		this.saveButtonView.type = 'submit';
-		this.cancelButtonView = this._createButton( t( 'Cancel' ), icons.cancel, 'ck-button-cancel', 'cancel' );
+		this.cancelButtonView = this._createButton( t( 'Cancel' ), undefined, 'ck-button-cancel', 'cancel' );
 		this._manualDecoratorSwitches = this._createManualDecoratorSwitches( linkCommand );
 		this.children = this._createFormChildren( linkCommand.manualDecorators );
 
@@ -251,7 +251,7 @@ export default class LinkFormView extends View {
 		const labeledInput = new LabeledFieldView( this.locale, createLabeledInputText );
 
 		labeledInput.fieldView.inputMode = 'url';
-		labeledInput.label = t( 'Link URL' );
+		labeledInput.fieldView.placeholder = t( 'Link URL' );
 
 		return labeledInput;
 	}
@@ -265,13 +265,13 @@ export default class LinkFormView extends View {
 	 * @param eventName An event name that the `ButtonView#execute` event will be delegated to.
 	 * @returns The button view instance.
 	 */
-	private _createButton( label: string, icon: string, className: string, eventName?: string ): ButtonView {
+	private _createButton( label: string, icon: string | undefined, className: string, eventName?: string ): ButtonView {
 		const button = new ButtonView( this.locale );
 
 		button.set( {
 			label,
 			icon,
-			tooltip: true
+			withText: true
 		} );
 
 		button.extendTemplate( {
