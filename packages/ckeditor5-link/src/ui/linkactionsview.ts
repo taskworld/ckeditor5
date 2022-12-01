@@ -82,7 +82,13 @@ export default class LinkActionsView extends View {
 
 		this.previewButtonView = this._createPreviewButton();
 		this.unlinkButtonView = this._createButton( t( 'Unlink' ), unlinkIcon, 'unlink' );
-		this.editButtonView = this._createButton( t( 'Edit link' ), icons.pencil, 'edit' );
+
+		/**
+		 * The edit link button view.
+		 *
+		 * @member {module:ui/button/buttonview~ButtonView}
+		 */
+		this.editButtonView = this._createButton( t( 'Edit' ), icons.pencil, 'edit', 'ck-button-edit' );
 
 		this.set( 'href', undefined );
 
@@ -172,14 +178,21 @@ export default class LinkActionsView extends View {
 	 * @param eventName An event name that the `ButtonView#execute` event will be delegated to.
 	 * @returns The button view instance.
 	 */
-	private _createButton( label: string, icon: string, eventName?: string ): ButtonView {
+	private _createButton( label: string, icon: string, eventName?: string, className?: string ): ButtonView {
 		const button = new ButtonView( this.locale );
 
 		button.set( {
 			label,
-			icon,
-			tooltip: true
+			withText: true
 		} );
+
+		if ( className ) {
+			button.extendTemplate( {
+				attributes: {
+					class: className
+				}
+			} );
+		}
 
 		button.delegate( 'execute' ).to( this, eventName );
 
