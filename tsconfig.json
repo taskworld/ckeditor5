@@ -6,8 +6,7 @@
     "noImplicitAny": true,
     "noImplicitOverride": true,
     "strict": true,
-    "module": "es6",
-    "target": "es2020",
+    "target": "ES2015",
     "sourceMap": true,
     "allowJs": true,
     "moduleResolution": "node"
