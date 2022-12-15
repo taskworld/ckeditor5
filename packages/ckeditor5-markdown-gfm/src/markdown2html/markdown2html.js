@@ -9,8 +9,38 @@
 
 import { marked } from 'marked';
 
+// Modified from https://github.com/markedjs/marked/issues/2328
+// See https://marked.js.org/using_pro#extensions
+const underline = {
+	name: 'underline',
+	level: 'inline',
+	start( src ) {
+		const match = src.match( /\+\+[^+\n]/ );
+		if ( match ) {
+			return match.index;
+		}
+	},
+	tokenizer( src ) {
+		const rule = /^(\+\+)(?=[^\s+])([\s\S]*?[^\s+])\1(?=[^+]|$)/;
+		const match = rule.exec( src );
+		if ( match ) {
+			const token = {
+				type: 'underline',
+				raw: match[ 0 ],
+				text: match[ 2 ],
+				tokens: this.lexer.inlineTokens( match[ 2 ] )
+			};
+			return token;
+		}
+	},
+	renderer( token ) {
+		return `<u>${ this.parser.parseInline( token.tokens ) }</u>`;
+	}
+};
+
 // Overrides.
 marked.use( {
+	extensions: [ underline ],
 	tokenizer: {
 		// Disable the autolink rule in the lexer.
 		autolink: () => null,
