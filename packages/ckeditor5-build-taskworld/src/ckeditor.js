@@ -28,6 +28,9 @@ import Mention from '../../ckeditor5-mention/src/mention';
 import Underline from '../../ckeditor5-basic-styles/src/underline';
 import Image from '../../ckeditor5-image/src/image';
 import ImageUpload from '../../ckeditor5-image/src/imageupload';
+import ImageToolbar from '../../ckeditor5-image/src/imagetoolbar';
+import ImageStyle from '../../ckeditor5-image/src/imagestyle';
+import AutoImage from '../../ckeditor5-image/src/autoimage';
 
 export default class ClassicEditor extends ClassicEditorBase {}
 
@@ -54,6 +57,9 @@ ClassicEditor.builtinPlugins = [
 	Strikethrough,
 	Underline,
 	Image,
+	ImageStyle,
+	ImageToolbar,
+	AutoImage,
 	ImageUpload
 ];
 
