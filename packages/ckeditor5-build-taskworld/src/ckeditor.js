@@ -26,8 +26,13 @@ import Markdown from '../../ckeditor5-markdown-gfm/src/markdown';
 import MarkdownGuide from '../../ckeditor5-markdown-guide/src/markdownguide';
 import Mention from '../../ckeditor5-mention/src/mention';
 import Underline from '../../ckeditor5-basic-styles/src/underline';
+import Image from '../../ckeditor5-image/src/image';
+import ImageUpload from '../../ckeditor5-image/src/imageupload';
+import ImageToolbar from '../../ckeditor5-image/src/imagetoolbar';
+import ImageStyle from '../../ckeditor5-image/src/imagestyle';
+import AutoImage from '../../ckeditor5-image/src/autoimage';
 
-export default class ClassicEditor extends ClassicEditorBase { }
+export default class ClassicEditor extends ClassicEditorBase {}
 
 // Plugins to include in the build.
 ClassicEditor.builtinPlugins = [
@@ -50,7 +55,12 @@ ClassicEditor.builtinPlugins = [
 	Paragraph,
 	RemoveFormat,
 	Strikethrough,
-	Underline
+	Underline,
+	Image,
+	ImageStyle,
+	ImageToolbar,
+	AutoImage,
+	ImageUpload
 ];
 
 // Editor configuration.
@@ -64,7 +74,8 @@ ClassicEditor.defaultConfig = {
 			'bulletedList',
 			'numberedList',
 			'blockQuote',
-			'link'
+			'link',
+			'uploadImage'
 		]
 	}
 };
