@@ -12,7 +12,7 @@ import Turndown from 'turndown';
 // There no avaialble types for 'turndown-plugin-gfm' module and it's not worth to generate them on our own.
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-import { gfm } from 'turndown-plugin-gfm';
+import { gfm, tables } from 'turndown-plugin-gfm';
 
 const autolinkRegex = /* #__PURE__ */ new RegExp(
 	// Prefix.
@@ -150,10 +150,21 @@ export class HtmlToMarkdown {
 
 		parser.use( [
 			gfm,
-			this._todoList
+			tables,
+			this._todoList,
+			this._strikethrough
 		] );
 
 		return parser;
+	}
+
+	private _strikethrough( turndown: UpdatedTurndown ): void {
+		turndown.addRule( 'strikethrough', {
+			filter: [ 'del', 's' ],
+			replacement( content: string ) {
+				return '~~' + content + '~~';
+			}
+		} );
 	}
 
 	// This is a copy of the original taskListItems rule from turndown-plugin-gfm, with minor changes.
