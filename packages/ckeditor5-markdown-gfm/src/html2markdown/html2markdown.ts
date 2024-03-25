@@ -15,7 +15,7 @@ import TurndownService from 'turndown';
 
 // There no avaialble types for 'turndown-plugin-gfm' module and it's not worth to generate them on our own.
 // @ts-ignore
-import { gfm } from 'turndown-plugin-gfm';
+import { highlightedCodeBlock, tables } from 'turndown-plugin-gfm';
 
 // Override the original escape method by not escaping links.
 const originalEscape = TurndownService.prototype.escape;
@@ -66,9 +66,21 @@ const turndownService = new TurndownService( {
 } );
 
 turndownService.use( [
-	gfm,
-	todoList
+	highlightedCodeBlock,
+	tables,
+	todoList,
+	strikethrough
 ] );
+
+// Slightly modified from turndown-plugin-gfm where "~~" is preferred over "~"
+function strikethrough( turndownService: TurndownService ) {
+	turndownService.addRule( 'strikethrough', {
+		filter: [ 'del', 's', 'strike' ],
+		replacement( content: string ) {
+			return '~~' + content + '~~';
+		}
+	} );
+}
 
 /**
  * Parses HTML to a markdown.
