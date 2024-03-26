@@ -9,6 +9,35 @@
 
 import { marked } from 'marked';
 
+// Modified from https://github.com/markedjs/marked/issues/2328
+// See https://marked.js.org/using_pro#extensions
+const underline: marked.TokenizerAndRendererExtension = {
+	name: 'underline',
+	level: 'inline',
+	start( src: string ) {
+		const match = src.match( /\+\+[^+\n]/ );
+		if ( match ) {
+			return match.index;
+		}
+	},
+	tokenizer( src: string ) {
+		const rule = /^(\+\+)(?=[^\s+])([\s\S]*?[^\s+])\1(?=[^+]|$)/;
+		const match = rule.exec( src );
+		if ( match ) {
+			const token = {
+				type: 'underline',
+				raw: match[ 0 ],
+				text: match[ 2 ],
+				tokens: this.lexer.inlineTokens( match[ 2 ] )
+			};
+			return token;
+		}
+	},
+	renderer( token ): string {
+		return `<u>${ this.parser.parseInline( token.tokens! ) }</u>`;
+	}
+};
+
 /**
  * This is a helper class used by the {@link module:markdown-gfm/markdown Markdown feature} to convert Markdown to HTML.
  */
@@ -26,6 +55,7 @@ export class MarkdownToHtml {
 	constructor() {
 		// Overrides.
 		marked.use( {
+			extensions: [ underline ],
 			tokenizer: {
 				// Disable the autolink rule in the lexer.
 				autolink: () => null as any,

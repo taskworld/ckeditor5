@@ -152,7 +152,8 @@ export class HtmlToMarkdown {
 			gfm,
 			tables,
 			this._todoList,
-			this._strikethrough
+			this._strikethrough,
+			this._underline
 		] );
 
 		return parser;
@@ -163,6 +164,15 @@ export class HtmlToMarkdown {
 			filter: [ 'del', 's' ],
 			replacement( content: string ) {
 				return '~~' + content + '~~';
+			}
+		} );
+	}
+
+	private _underline( turndown: UpdatedTurndown ) {
+		turndown.addRule( 'underline', {
+			filter: [ 'ins', 'u' ],
+			replacement( content: string ) {
+				return '++' + content + '++';
 			}
 		} );
 	}
