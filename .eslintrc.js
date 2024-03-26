@@ -14,6 +14,9 @@ module.exports = {
 		// ESLint should not process compiled TypeScript.
 		'src/*.js'
 	],
+	env: {
+		browser: true
+	},
 	rules: {
 		'max-len': 'off',
 		'ckeditor5-rules/ckeditor-imports': 'error',

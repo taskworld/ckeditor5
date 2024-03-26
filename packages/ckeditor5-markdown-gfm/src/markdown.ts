@@ -10,6 +10,9 @@
 import { Plugin, type Editor } from 'ckeditor5/src/core.js';
 import GFMDataProcessor from './gfmdataprocessor.js';
 
+// eslint-disable-next-line ckeditor5-rules/no-relative-imports
+import '../../ckeditor5-mention/src/index.js';
+
 /**
  * The GitHub Flavored Markdown (GFM) plugin.
  *
@@ -22,7 +25,10 @@ export default class Markdown extends Plugin {
 	constructor( editor: Editor ) {
 		super( editor );
 
-		editor.data.processor = new GFMDataProcessor( editor.data.viewDocument );
+		// Do not write `get('mention.idToText')` as it does NOT return a resolver function
+		const mentionIdToText = editor.config.get( 'mention' )?.idToText;
+
+		editor.data.processor = new GFMDataProcessor( editor.data.viewDocument, mentionIdToText );
 	}
 
 	/**
