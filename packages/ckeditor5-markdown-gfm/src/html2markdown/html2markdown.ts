@@ -69,7 +69,8 @@ turndownService.use( [
 	highlightedCodeBlock,
 	tables,
 	todoList,
-	strikethrough
+	strikethrough,
+	underline
 ] );
 
 // Slightly modified from turndown-plugin-gfm where "~~" is preferred over "~"
@@ -78,6 +79,15 @@ function strikethrough( turndownService: TurndownService ) {
 		filter: [ 'del', 's', 'strike' ],
 		replacement( content: string ) {
 			return '~~' + content + '~~';
+		}
+	} );
+}
+
+function underline( turndownService: TurndownService ) {
+	turndownService.addRule( 'underline', {
+		filter: [ 'ins', 'u' ],
+		replacement( content: string ) {
+			return '++' + content + '++';
 		}
 	} );
 }
