@@ -31,5 +31,7 @@ export default class RemoveFormatEditing extends Plugin {
 		const editor = this.editor;
 
 		editor.commands.add( 'removeFormat', new RemoveFormatCommand( editor ) );
+
+		editor.keystrokes.set( [ 'CTRL', 220 /* Backslash */], 'removeFormat' );
 	}
 }

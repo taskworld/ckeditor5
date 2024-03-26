@@ -59,7 +59,8 @@ export default class RemoveFormatUI extends Plugin {
 
 		view.set( {
 			label: t( 'Remove Format' ),
-			icon: removeFormatIcon
+			icon: removeFormatIcon,
+			keystroke: 'CTRL+\\'
 		} );
 
 		view.bind( 'isEnabled' ).to( command, 'isEnabled' );
