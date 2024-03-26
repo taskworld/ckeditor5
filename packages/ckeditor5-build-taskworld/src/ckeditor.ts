@@ -15,6 +15,7 @@ import { Indent } from '../../ckeditor5-indent/src/index.js';
 import { AutoLink, Link } from '../../ckeditor5-link/src/index.js';
 import { List } from '../../ckeditor5-list/src/index.js';
 import { Paragraph } from '../../ckeditor5-paragraph/src/index.js';
+import { RemoveFormat } from '../../ckeditor5-remove-format/src/index.js';
 import { Bold, Code, Italic, Strikethrough } from '../../ckeditor5-basic-styles/src/index.js';
 import { Markdown } from '../../ckeditor5-markdown-gfm/src/index.js';
 import { Mention } from '../../ckeditor5-mention/src/index.js';
@@ -38,6 +39,7 @@ ClassicEditor.builtinPlugins = [
 	Markdown,
 	Mention,
 	Paragraph,
+	RemoveFormat,
 	Strikethrough
 ];
 
