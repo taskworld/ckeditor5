@@ -119,6 +119,12 @@ export interface MentionConfig {
 	 * @default 10
 	 */
 	dropdownLimit?: number;
+
+	/**
+	 * Returns the user full name from the corresponding user ID.
+	 * @example idToText('5f7e99c932cb8c00061b87d9') // 'Patrick Star'
+	 */
+	idToText?: ( id: string ) => string;
 }
 
 /**
