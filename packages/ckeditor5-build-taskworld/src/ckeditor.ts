@@ -21,6 +21,7 @@ import { Bold, Code, Italic, Strikethrough, Underline } from '../../ckeditor5-ba
 import { Markdown } from '../../ckeditor5-markdown-gfm/src/index.js';
 import MarkdownGuide from './markdownguide.js';
 import { Mention } from '../../ckeditor5-mention/src/index.js';
+import { Image, ImageUpload, ImageStyle, ImageToolbar, AutoImage } from '../../ckeditor5-image/src/index.js';
 
 export default class ClassicEditor extends ClassicEditorBase { }
 
@@ -36,6 +37,11 @@ ClassicEditor.builtinPlugins = [
 	Heading,
 	HorizontalLine,
 	Italic,
+	Image,
+	ImageUpload,
+	ImageStyle,
+	ImageToolbar,
+	AutoImage,
 	Indent,
 	Link,
 	List,
