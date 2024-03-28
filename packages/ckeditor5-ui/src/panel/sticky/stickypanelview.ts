@@ -96,6 +96,10 @@ export default class StickyPanelView extends View {
 	 */
 	declare public viewportTopOffset: number;
 
+	declare public viewport: () => HTMLElement;
+
+	declare public positionalReferenceFrame: () => HTMLElement;
+
 	/**
 	 * The panel which accepts children into {@link #content} collection.
 	 * Also an element which is positioned when {@link #isSticky}.
@@ -157,8 +161,10 @@ export default class StickyPanelView extends View {
 		this.set( 'isActive', false );
 		this.set( 'isSticky', false );
 		this.set( 'limiterElement', null );
-		this.set( 'limiterBottomOffset', 50 );
-		this.set( 'viewportTopOffset', 0 );
+		this.set( 'limiterBottomOffset', 45 );
+
+		this.set( 'viewport', () => global.window.document.body );
+		this.set( 'positionalReferenceFrame', () => global.window.document.body );
 
 		this.set( '_marginLeft', null );
 		this.set( '_isStickyToTheBottomOfLimiter', false );
@@ -234,8 +240,8 @@ export default class StickyPanelView extends View {
 		// Check if the panel should go into the sticky state immediately.
 		this.checkIfShouldBeSticky();
 
-		// Update sticky state of the panel as the window and ancestors are being scrolled.
-		this.listenTo( global.document, 'scroll', () => {
+		// Update sticky state of the panel as the window is being scrolled.
+		this.listenTo( this.viewport(), 'scroll', () => {
 			this.checkIfShouldBeSticky();
 		}, { useCapture: true } );
 
@@ -250,8 +256,6 @@ export default class StickyPanelView extends View {
 	 * Then handles the positioning of the panel.
 	 */
 	public checkIfShouldBeSticky(): void {
-		// @if CK_DEBUG_STICKYPANEL // RectDrawer.clear();
-
 		if ( !this.limiterElement || !this.isActive ) {
 			this._unstick();
 
@@ -322,7 +326,20 @@ export default class StickyPanelView extends View {
 				}
 			}
 		} else {
-			this._unstick();
+			const viewportTopOffset = this.viewport().getBoundingClientRect().top;
+			const contentHeight = this.contentPanelElement.getBoundingClientRect().height;
+
+			if (
+				viewportTopOffset > 0 &&
+				limiterRect.top < viewportTopOffset &&
+				contentHeight + this.limiterBottomOffset < limiterRect.height &&
+				contentHeight + this.limiterBottomOffset + viewportTopOffset < limiterRect.bottom
+			) {
+				const referenceFrameTopOffset = this.positionalReferenceFrame().getBoundingClientRect().top;
+				this._stickToTopOfAncestors( viewportTopOffset - referenceFrameTopOffset );
+			} else {
+				this._unstick();
+			}
 		}
 
 		// @if CK_DEBUG_STICKYPANEL // console.clear();
