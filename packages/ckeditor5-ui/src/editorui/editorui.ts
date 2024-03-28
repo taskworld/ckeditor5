@@ -156,8 +156,6 @@ export default abstract class EditorUI extends /* #__PURE__ */ ObservableMixin()
 		this.poweredBy = new PoweredBy( editor );
 		this.ariaLiveAnnouncer = new AriaLiveAnnouncer( editor );
 
-		this.set( 'viewportOffset', this._readViewportOffsetFromConfig() );
-
 		this.once<EditorUIReadyEvent>( 'ready', () => {
 			this._bindBodyCollectionWithFocusTracker();
 
@@ -430,53 +428,6 @@ export default abstract class EditorUI extends /* #__PURE__ */ ObservableMixin()
 			menuBarView.focus();
 			cancel();
 		} );
-	}
-
-	/**
-	 * Returns viewport offsets object:
-	 *
-	 * ```js
-	 * {
-	 * 	top: Number,
-	 * 	right: Number,
-	 * 	bottom: Number,
-	 * 	left: Number
-	 * }
-	 * ```
-	 *
-	 * Only top property is currently supported.
-	 */
-	private _readViewportOffsetFromConfig() {
-		const editor = this.editor;
-		const viewportOffsetConfig = editor.config.get( 'ui.viewportOffset' );
-
-		if ( viewportOffsetConfig ) {
-			return viewportOffsetConfig;
-		}
-
-		// Not present in EditorConfig type, because it's legacy. Hence the `as` expression.
-		const legacyOffsetConfig = editor.config.get( 'toolbar.viewportTopOffset' ) as number | undefined;
-
-		// Fall back to deprecated toolbar config.
-		if ( legacyOffsetConfig ) {
-			/**
-			 * The {@link module:core/editor/editorconfig~EditorConfig#toolbar `EditorConfig#toolbar.viewportTopOffset`}
-			 * property has been deprecated and will be removed in the near future. Please use
-			 * {@link module:core/editor/editorconfig~EditorConfig#ui `EditorConfig#ui.viewportOffset`} instead.
-			 *
-			 * @error editor-ui-deprecated-viewport-offset-config
-			 */
-			console.warn(
-				'editor-ui-deprecated-viewport-offset-config: ' +
-				'The `toolbar.vieportTopOffset` configuration option is deprecated. ' +
-				'It will be removed from future CKEditor versions. Use `ui.viewportOffset.top` instead.'
-			);
-
-			return { top: legacyOffsetConfig };
-		}
-
-		// More keys to come in the future.
-		return { top: 0 };
 	}
 
 	/**

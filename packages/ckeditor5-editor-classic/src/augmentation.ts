@@ -3,10 +3,12 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
-/**
- * @module editor-classic
- */
+import './index.js';
 
-export { default as ClassicEditor } from './classiceditor.js';
+declare module '@ckeditor/ckeditor5-core' {
+	interface UiConfig {
+		viewport?: () => HTMLElement;
 
-import './augmentation.js';
+		positionalReferenceFrame?: () => HTMLElement;
+	}
+}

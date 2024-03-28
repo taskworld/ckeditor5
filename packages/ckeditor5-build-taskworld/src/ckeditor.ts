@@ -3,8 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
-// The editor creator to use.
-import { ClassicEditor as ClassicEditorBase } from '@ckeditor/ckeditor5-editor-classic';
+import { ClassicEditor as ClassicEditorBase } from '../../ckeditor5-editor-classic/src/index.js';
 
 import { Autoformat } from '../../ckeditor5-autoformat/src/index.js';
 import { BlockQuote } from '../../ckeditor5-block-quote/src/index.js';
