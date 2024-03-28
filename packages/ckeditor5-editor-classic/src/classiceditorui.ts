@@ -15,7 +15,7 @@ import {
 	type EditorUIReadyEvent,
 	type DialogViewMoveToEvent,
 	type Dialog
-} from 'ckeditor5/src/ui.js';
+} from '../../ckeditor5-ui/src/index.js';
 import {
 	enablePlaceholder,
 	type ViewScrollToTheSelectionEvent
