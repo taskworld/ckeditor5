@@ -1,0 +1,26 @@
+name: Publish
+on:
+  push:
+    branches:
+      - taskworld-v*
+jobs:
+  publish_package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@taskworld'
+
+      - run: yarn
+
+      - working-directory: packages/ckeditor5-build-taskworld
+        run: |
+          TAG="v$(node -p "require('./package.json').version")-$(git rev-parse --short HEAD)"
+          npm --no-git-tag-version version "$TAG"
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

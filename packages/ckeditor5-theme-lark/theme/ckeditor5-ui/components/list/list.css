@@ -23,25 +23,12 @@
 
 .ck.ck-list__item {
 	cursor: default;
-	min-width: 12em;
+	min-width: 15em;
 
 	& .ck-button {
 		min-height: unset;
 		width: 100%;
 		border-radius: 0;
-
-		@mixin ck-dir ltr {
-			text-align: left;
-		}
-
-		@mixin ck-dir rtl {
-			text-align: right;
-		}
-
-		/* List items should have the same height. Use absolute units to make sure it is so
-		   because e.g. different heading styles may have different height
-		   https://github.com/ckeditor/ckeditor5-heading/issues/63 */
-		padding: var(--ck-list-button-padding);
 
 		& .ck-button__label {
 			/* https://github.com/ckeditor/ckeditor5-heading/issues/63 */
