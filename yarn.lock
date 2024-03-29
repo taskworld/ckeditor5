@@ -3600,11 +3600,6 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.191.tgz#09511e7f7cba275acd8b419ddac8da9a6a79e2fa"
   integrity sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==
 
-"@types/marked@^4.0.8":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-4.3.2.tgz#e2e0ad02ebf5626bd215c5bae2aff6aff0ce9eac"
-  integrity sha512-a79Yc3TOk6dGdituy8hmTTJXjOkZ7zsFYV10L337ttq/rec8lRMDBpV7fL3uLx6TgbFCa5DU/h8FmIBQPSbU0w==
-
 "@types/mdast@^3.0.0":
   version "3.0.10"
   resolved "https://registry.yarnpkg.com/@types/mdast/-/mdast-3.0.10.tgz#4724244a82a4598884cbbe9bcfd73dff927ee8af"
@@ -10605,10 +10600,20 @@ markdown-it@^13.0.1:
     mdurl "^1.0.1"
     uc.micro "^1.0.5"
 
-marked@4.0.12:
-  version "4.0.12"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-4.0.12.tgz#2262a4e6fd1afd2f13557726238b69a48b982f7d"
-  integrity sha512-hgibXWrEDNBWgGiK18j/4lkS6ihTe9sxtV4Q1OQppb/0zzyPSzoFANBa5MfsG/zgsWklmNnhm0XACZOH/0HBiQ==
+marked-extended-tables@1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/marked-extended-tables/-/marked-extended-tables-1.0.8.tgz#9633f95943b0bc1a84e3a42f4ce71e4cb97ba477"
+  integrity sha512-GcVQP7EnfQ98o09ooqM4t4M0qfpKdKuk7/z4qZfgkLyXTXsIyFS1eeBmfC36o1NbR6aSq8ynL/LeTz3w4RS27Q==
+
+marked-xhtml@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/marked-xhtml/-/marked-xhtml-1.0.9.tgz#5882738d69eaf2914e67a5c45e188cf954a7ca3f"
+  integrity sha512-Q2VEHml4OAxoeM/6oxpnCLRreVgfZnllt4Z77GONtYrYBEWYDx/56GKCwWvVuOQ7FDuholYt5ZUfAcV9zkA64g==
+
+marked@12.0.1:
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-12.0.1.tgz#8ab1eb15560c7cbe3b011074845d7ca6c4d392b0"
+  integrity sha512-Y1/V2yafOcOdWQCX0XpAKXzDakPOpn6U0YLxTJs3cww6VxOzZV1BTOOYWLvH3gX38cq+iLwljHHTnMtlDfg01Q==
 
 marked@^4.0.18:
   version "4.2.3"

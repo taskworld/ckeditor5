@@ -7,11 +7,14 @@
  * @module markdown-gfm/markdown2html/markdown2html
  */
 
-import { marked } from 'marked';
+import { marked, type MarkedOptions, type TokenizerAndRendererExtension } from 'marked';
+// @ts-expect-error no type defs for now
+import markedExtendedTables from 'marked-extended-tables/src/index.js';
+import { markedXhtml } from 'marked-xhtml';
 
 // Modified from https://github.com/markedjs/marked/issues/2328
 // See https://marked.js.org/using_pro#extensions
-const underline: marked.TokenizerAndRendererExtension = {
+const underline: TokenizerAndRendererExtension = {
 	name: 'underline',
 	level: 'inline',
 	start( src: string ) {
@@ -44,15 +47,16 @@ const underline: marked.TokenizerAndRendererExtension = {
 export class MarkdownToHtml {
 	private _parser: typeof marked;
 
-	private _options = {
+	private _options: MarkedOptions = {
+		async: false,
 		gfm: true,
-		breaks: true,
-		tables: true,
-		xhtml: true,
-		headerIds: false
+		breaks: true
 	};
 
 	constructor() {
+		marked.use( markedExtendedTables() );
+		marked.use( markedXhtml() );
+
 		// Overrides.
 		marked.use( {
 			extensions: [ underline ],
@@ -82,6 +86,6 @@ export class MarkdownToHtml {
 	}
 
 	public parse( markdown: string ): string {
-		return this._parser.parse( markdown, this._options );
+		return this._parser.parse( markdown, this._options ) as string;
 	}
 }
