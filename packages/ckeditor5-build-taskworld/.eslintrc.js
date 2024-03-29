@@ -9,6 +9,7 @@ module.exports = {
 		'ckeditor5-rules/ckeditor-imports': 'off',
 		'ckeditor5-rules/license-header': 'off',
 		'ckeditor5-rules/no-cross-package-svg-imports': 'off',
-		'ckeditor5-rules/no-relative-imports': 'off'
+		'ckeditor5-rules/no-relative-imports': 'off',
+		'ckeditor5-rules/require-file-extensions-in-imports': 'off'
 	}
 };
