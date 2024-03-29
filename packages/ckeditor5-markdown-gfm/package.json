@@ -14,8 +14,10 @@
   "main": "src/index.ts",
   "dependencies": {
     "ckeditor5": "41.2.1",
-    "marked": "4.0.12",
-    "turndown": "6.0.0",
+    "marked": "12.0.1",
+    "marked-extended-tables": "1.0.8",
+    "marked-xhtml": "1.0.9",
+    "turndown": "7.1.3",
     "turndown-plugin-gfm": "1.0.2"
   },
   "devDependencies": {
@@ -42,7 +44,6 @@
     "@ckeditor/ckeditor5-theme-lark": "41.2.1",
     "@ckeditor/ckeditor5-undo": "41.2.1",
     "@ckeditor/ckeditor5-utils": "41.2.1",
-    "@types/marked": "^4.0.8",
     "typescript": "5.0.4",
     "webpack": "^5.58.1",
     "webpack-cli": "^4.9.0"
