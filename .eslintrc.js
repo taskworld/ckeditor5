@@ -19,6 +19,7 @@ module.exports = {
 	},
 	rules: {
 		'max-len': 'off',
+		'ckeditor5-rules/no-relative-imports': 'off',
 		'ckeditor5-rules/ckeditor-imports': 'error',
 		'ckeditor5-rules/license-header': [ 'error', {
 			headerLines: [

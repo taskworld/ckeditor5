@@ -16,7 +16,7 @@ import {
 	type Dialog,
 	type EditorUIReadyEvent,
 	type ContextualBalloonGetPositionOptionsEvent
-} from 'ckeditor5/src/ui.js';
+} from '../../ckeditor5-ui/src/index.js';
 import {
 	enablePlaceholder,
 	type ViewScrollToTheSelectionEvent

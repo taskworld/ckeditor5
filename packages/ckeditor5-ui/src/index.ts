@@ -19,6 +19,7 @@ export { default as addKeyboardHandlingForGrid } from './bindings/addkeyboardhan
 export { default as AccessibilityHelp } from './editorui/accessibilityhelp/accessibilityhelp.js';
 
 export { default as BodyCollection } from './editorui/bodycollection.js';
+export { default as LinkView } from './button/linkview.js';
 
 export type { default as Button, ButtonExecuteEvent } from './button/button.js';
 export type { default as ButtonLabel } from './button/buttonlabel.js';

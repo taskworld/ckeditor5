@@ -14,6 +14,7 @@ import ToolbarLineBreakView from './toolbarlinebreakview.js';
 import preventDefault from '../bindings/preventdefault.js';
 import { createDropdown, addToolbarToDropdown } from '../dropdown/utils.js';
 import normalizeToolbarConfig from './normalizetoolbarconfig.js';
+import ToolbarSpacerView from './toolbarspacerview.js';
 
 import type ComponentFactory from '../componentfactory.js';
 import type ViewCollection from '../viewcollection.js';
@@ -342,6 +343,8 @@ export default class ToolbarView extends View implements DropdownPanelFocusable 
 					return new ToolbarSeparatorView();
 				} else if ( item === '-' ) {
 					return new ToolbarLineBreakView();
+				} else if ( item === '*' ) {
+					return new ToolbarSpacerView();
 				}
 
 				return factory.create( item );
@@ -367,7 +370,7 @@ export default class ToolbarView extends View implements DropdownPanelFocusable 
 	) {
 		const filteredItems = items
 			.filter( ( item, idx, items ) => {
-				if ( item === '|' ) {
+				if ( item === '|' || item === '*' ) {
 					return true;
 				}
 
@@ -445,7 +448,7 @@ export default class ToolbarView extends View implements DropdownPanelFocusable 
 	 * @returns Toolbar items after the separator and line break clean-up.
 	 */
 	private _cleanSeparatorsAndLineBreaks( items: Array<ToolbarConfigItem> ) {
-		const nonSeparatorPredicate = ( item: ToolbarConfigItem ) => ( item !== '-' && item !== '|' );
+		const nonSeparatorPredicate = ( item: ToolbarConfigItem ) => ( item !== '-' && item !== '|' && item !== '*' );
 		const count = items.length;
 
 		// Find an index of the first item that is not a separator.

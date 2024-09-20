@@ -7,7 +7,7 @@
  * @module editor-classic/classiceditoruiview
  */
 
-import { BoxedEditorUIView, InlineEditableUIView, MenuBarView, StickyPanelView, ToolbarView } from 'ckeditor5/src/ui.js';
+import { BoxedEditorUIView, InlineEditableUIView, MenuBarView, StickyPanelView, ToolbarView } from '../../ckeditor5-ui/src/index.js';
 import type { Locale } from 'ckeditor5/src/utils.js';
 import type { EditingView } from 'ckeditor5/src/engine.js';
 
@@ -79,7 +79,7 @@ export default class ClassicEditorUIView extends BoxedEditorUIView {
 		super.render();
 
 		if ( this.menuBarView ) {
-			// Set toolbar as a child of a stickyPanel and makes toolbar sticky.
+		// Set toolbar as a child of a stickyPanel and makes toolbar sticky.
 			this.stickyPanel.content.addMany( [ this.menuBarView, this.toolbar ] );
 		} else {
 			this.stickyPanel.content.add( this.toolbar );

@@ -19,6 +19,7 @@ import { Paragraph } from '../../ckeditor5-paragraph/src/index.js';
 import { RemoveFormat } from '../../ckeditor5-remove-format/src/index.js';
 import { Bold, Code, Italic, Strikethrough } from '../../ckeditor5-basic-styles/src/index.js';
 import { Markdown } from '../../ckeditor5-markdown-gfm/src/index.js';
+import MarkdownGuide from './markdownguide.js';
 import { Mention } from '../../ckeditor5-mention/src/index.js';
 
 export default class ClassicEditor extends ClassicEditorBase { }
@@ -39,6 +40,7 @@ ClassicEditor.builtinPlugins = [
 	Link,
 	List,
 	Markdown,
+	MarkdownGuide,
 	Mention,
 	Paragraph,
 	RemoveFormat,
