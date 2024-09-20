@@ -335,6 +335,8 @@ export default class ContextualBalloon extends Plugin {
 		let position = Array.from( this._visibleStack.values() ).pop()!.position;
 
 		if ( position ) {
+			const getViewport = this.editor.config.get( 'ui' )?.viewport;
+
 			// Use the default limiter if none has been specified.
 			if ( !position.limiter ) {
 				// Don't modify the original options object.
@@ -344,9 +346,11 @@ export default class ContextualBalloon extends Plugin {
 			}
 
 			// Don't modify the original options object.
-			position = Object.assign( {}, position, {
-				viewportOffsetConfig: this.editor.ui.viewportOffset
-			} );
+			if ( getViewport ) {
+				position = Object.assign( {}, position, {
+					viewportOffsetConfig: getViewport().getBoundingClientRect()
+				} );
+			}
 		}
 
 		return position;
@@ -535,7 +539,7 @@ export default class ContextualBalloon extends Plugin {
  * An event fired when the {@link module:ui/panel/balloon/contextualballoon~ContextualBalloon} is about to get the position of the balloon.
  *
  * @eventName ~ContextualBalloon#getPositionOptions
- */
+	 */
 export type ContextualBalloonGetPositionOptionsEvent = DecoratedMethodEvent<ContextualBalloon, 'getPositionOptions'>;
 
 /**

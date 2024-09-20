@@ -26,7 +26,7 @@ import {
 	type PositioningFunction
 } from '@ckeditor/ckeditor5-utils';
 
-import { isElement } from 'lodash-es';
+import { isElement, isNumber } from 'lodash-es';
 import '../../../theme/components/panel/balloonpanel.css';
 
 const toPx = /* #__PURE__ */ toUnit( 'px' );
@@ -299,6 +299,15 @@ export default class BalloonPanelView extends View {
 		// so it is better to use int values.
 		const left = parseInt( optimalPosition.left as any );
 		const top = parseInt( optimalPosition.top as any );
+
+		// Hide the balloon when the editor is not in the viewport
+		// See https://enterprise.taskworld.com/taskworld.com/#/home?show=/task/197628/comments
+		if ( positionOptions.viewportOffsetConfig ) {
+			if ( isNumber( positionOptions.viewportOffsetConfig.top ) && top < positionOptions.viewportOffsetConfig.top ) {
+				this.hide();
+				return false;
+			}
+		}
 
 		const position = optimalPosition.name as this[ 'position' ];
 		const config: { withArrow?: boolean } = optimalPosition.config || {};
