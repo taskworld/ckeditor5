@@ -15,6 +15,7 @@ module.exports = {
 		'src/*.js'
 	],
 	rules: {
+		'max-len': 'off',
 		'ckeditor5-rules/ckeditor-imports': 'error',
 		'ckeditor5-rules/license-header': [ 'error', {
 			headerLines: [
