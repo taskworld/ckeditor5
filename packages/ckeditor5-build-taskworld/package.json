@@ -1,6 +1,6 @@
 {
   "name": "@taskworld/ckeditor5",
-  "version": "43.1.0",
+  "version": "43.1.1",
   "description": "CKEditor custom build for Taskworld",
   "author": "CKSource (http://cksource.com/)",
   "license": "GPL-2.0-or-later",
