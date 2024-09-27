@@ -25,14 +25,14 @@
     "react": "^18.0.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-utils": "^39.0.0",
-    "@ckeditor/ckeditor5-dev-translations": "^39.0.0",
-    "@ckeditor/ckeditor5-react": "^6.2.0",
+    "@ckeditor/ckeditor5-dev-utils": "^43.0.0",
+    "@ckeditor/ckeditor5-dev-translations": "^43.0.0",
+    "@ckeditor/ckeditor5-react": "^9.3.0",
     "@types/react": "^18.0.0",
     "webpack": "^5.58.1",
     "webpack-cli": "^4.9.0"
   },
   "dependencies": {
-    "ckeditor5": "43.1.0"
+    "ckeditor5": "43.1.1"
   }
 }
