@@ -14,6 +14,10 @@ See also [CKEditor 5 official documentation](https://ckeditor.com/docs/ckeditor5
 
 The editor bundle can be found at [_packages/ckeditor5-build-taskworld_](packages/ckeditor5-build-taskworld/README.md) directory.
 
+To upgrade CKEditor and its plugins, visit [taskworld/ckeditor5/tree/stable](https://github.com/taskworld/ckeditor5/tree/stable) and click **Sync fork** then **Update branch** as shown below. After that, rebase `taskworld-v*` branch onto the recently synced `stable` branch. Do not forget to update the `version` field and dependencies in _packages/ckeditor5-build-taskworld/package.json_
+
+![Sync fork](./stable-sync-fork.png)
+
 To test a work-in-progress editor, make sure you have [tw-frontend](https://github.com/taskworld/tw-frontend) repository cloned next to this repository then run the below:
 ```bash
 yarn
@@ -22,8 +26,6 @@ yarn test
 ```
 
 The above commands will rebuild the editor and copy the bundle onto _tw-frontend/client/node_modules/@taskworld/ckeditor5_
-
-# Usage
 
 To deploy a new version, simply push a new commit to `taskworld-v*` branch. [GitHub Actions](.github/workflows/publish.yml) will automatically create a new version containing the **Git commit hash** and publish it to GitHub registry.
 
